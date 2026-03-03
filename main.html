@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will You Be My Girlfriend, Shivangi?</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      text-align: center;
+      color: #fff;
+      background: linear-gradient(-45deg, #ffdde1, #ee9ca7, #fad0c4, #fbc2eb);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    /* Starry night background */
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    .container {
+      margin-top: 10%;
+      z-index: 2;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #b30059;
+    }
+
+    p {
+      font-size: 1.5em;
+      margin: 20px 0;
+    }
+
+    .button {
+      background-color: #b30059;
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin: 10px;
+    }
+    .button:hover {
+      background-color: #800040;
+    }
+
+    #surprise, #fallback {
+      display: none;
+      font-size: 2em;
+      margin-top: 30px;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Playful No option */
+    #fallback {
+      color: #ffcc00;
+      animation: shake 0.5s infinite;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Extra magic: roses blooming */
+    .rose {
+      position: absolute;
+      bottom: 0;
+      width: 40px;
+      height: 40px;
+      background: red;
+      border-radius: 50%;
+      animation: bloom 6s ease-in-out forwards;
+    }
+    @keyframes bloom {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Fireflies */
+    .firefly {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: yellow;
+      border-radius: 50%;
+      animation: drift 10s linear infinite;
+      opacity: 0.8;
+    }
+    @keyframes drift {
+      0% { transform: translate(0,0); }
+      50% { transform: translate(50px,-100px); }
+      100% { transform: translate(-50px,-200px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <h1>Will You Be My GirlFriend, Shivangi?</h1>
+    <p>Shivangi, i like you very much . I want to spend forever with you.</p>
+    <button class="button" onclick="sayYes()">Yes, I Do ❤️</button>
+    <button class="button" onclick="sayNo()">No 😢</button>
+    <div id="surprise">I can’t wait to start forever with you, Shivangi 💕</div>
+    <div id="fallback">Oh no! That can’t be right 😜 Try again…</div>
+  </div>
+
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createFirework(x, y) {
+      const colors = ['#ff0040','#ff8000','#ffff00','#00ff00','#00ffff','#0080ff','#ff00ff'];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          angle: random(0, 2 * Math.PI),
+          speed: random(2, 7),
+          radius: random(2, 4),
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: 100
+        });
+      }
+    }
+
+    function updateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+        p.life--;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        if (p.life <= 0) particles.splice(i, 1);
+      });
+      requestAnimationFrame(updateParticles);
+    }
+
+    function sayYes() {
+      createFirework(canvas.width / 2, canvas.height / 2);
+      updateParticles();
+      document.getElementById('surprise').style.display = 'block';
+      document.getElementById('fallback').style.display = 'none';
+      createRose();
+      createFirefly();
+    }
+
+    function sayNo() {
+      document.getElementById('fallback').style.display = 'block';
+      document.getElementById('surprise').style.display = 'none';
+    }
+
+    // Starry night generator
+    function createStars() {
+      const stars = document.getElementById('stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.style.top = Math.random() * window.innerHeight + 'px';
+        star.style.left = Math.random() * window.innerWidth + 'px';
+        stars.appendChild(star);
+      }
+    }
+    createStars();
+
+    // Roses blooming
+    function createRose() {
+      for (let i = 0; i < 5; i++) {
+        const rose = document.createElement('div');
+        rose.classList.add('rose');
+        rose.style.left = Math.random() * window.innerWidth + 'px';
+        document.body.appendChild(rose);
+        setTimeout(() => rose.remove(), 6000);
+      }
+    }
+
+    // Fireflies
+    function createFirefly() {
+      for (let i = 0; i < 5; i++) {
+        const firefly = document.createElement('div');
+        firefly.classList.add('firefly');
+        firefly.style.top = Math.random() * window.innerHeight + 'px';
+        firefly.style.left = Math.random() * window.innerWidth + 'px';
+        document.body.appendChild(firefly);
+        setTimeout(() => firefly.remove(), 10000);
+      }
+    }
+  </script>
+</body>
+</html>
